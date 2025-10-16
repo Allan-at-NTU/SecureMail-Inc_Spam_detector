@@ -7,145 +7,224 @@
   <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
-  <div class="container">
-    <header class="header">
-      <div class="brand">
-        <div class="logo">📡</div>
+  <header class="site-header">
+    <div class="wrap nav">
+      <div class="brand">SecureMail</div>
+      <nav class="nav-links">
+        <a href="#classifier" data-scroll>Test</a>
+        <a href="#how-it-works" data-scroll>How it Works</a>
+        <a href="#spam-phishing" data-scroll>Spam & Phishing</a>
+        <a href="#performance" data-scroll>Performance</a>
+        <a href="#impact" data-scroll>Business Impact</a>
+        <a href="#learning" data-scroll>Learning Hub</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="wrap hero-inner">
+      <h1>Smarter Email Security with AI</h1>
+      <p class="sub">SecureMail’s ML-based spam classifier helps enterprises reduce phishing risk and keep communication clean.</p>
+      <div class="cta">
+        <a class="btn primary" href="#classifier" data-scroll>Test the Classifier</a>
+        <a class="btn ghost" href="#how-it-works" data-scroll>Learn How It Works</a>
+      </div>
+    </div>
+    <div class="glow"></div>
+  </section>
+
+  <main class="wrap">
+
+    <!-- Test the Classifier -->
+    <section id="classifier" class="section card">
+      <div class="section-head">
+        <h2>Spam Detector</h2>
+        <p class="muted">Paste a message and see the classification instantly.</p>
+      </div>
+      <div class="grid-2">
         <div>
-          <h1>Spam Detector</h1>
-          <p class="subtitle">Paste a message to see if it’s spam, with confidence and quick explanation.</p>
+          <label class="label">Message</label>
+          <textarea id="text" placeholder="Type or paste your email text..."></textarea>
+          <div class="row">
+            <button id="predict-btn" class="btn primary">Analyze</button>
+            <button id="clear-btn" class="btn ghost" type="button">Clear</button>
+          </div>
+        </div>
+        <div>
+          <div id="result" class="result-card hidden">
+            <div id="badge" class="badge">Result</div>
+            <div class="result-copy" id="result-copy">Your result will appear here.</div>
+          </div>
+          <div class="note muted tiny">No probabilities or feature attributions are shown; this demo focuses on clarity and privacy.</div>
         </div>
       </div>
-      <div class="badge">v1.1</div>
-    </header>
+    </section>
 
-    <main class="grid">
-      <!-- Left: Classifier -->
-      <section class="card">
-        <h2>Classifier</h2>
-        <form id="spam-form" onsubmit="return false;">
-          <label class="label">Message</label>
-          <textarea id="text" placeholder="Type or paste your message..."></textarea>
+    <!-- How It Works -->
+    <section id="how-it-works" class="section card">
+      <div class="section-head">
+        <h2>How Our Classifier Works</h2>
+        <p class="muted">A simple end-to-end pipeline with modern NLP.</p>
+      </div>
 
-          <div class="actions">
-            <button id="predict-btn">Analyze</button>
-            <button id="clear-btn" type="button" class="ghost">Clear</button>
-          </div>
-        </form>
-
-        <div id="result" class="result hidden">
-          <div class="pill" id="label-pill">Result</div>
-          <div class="conf">
-            <div class="conf-row">
-              <span>Confidence</span>
-              <span id="conf-value">—</span>
-            </div>
-            <div class="conf-bar"><div id="conf-bar-fill"></div></div>
-            <div id="calib-note" class="muted tiny hidden">Note: confidence is approximate (not calibrated).</div>
-          </div>
-
-          <div class="explain">
-            <h3>Why this result?</h3>
-            <ul id="explain-list" class="tokens"></ul>
-            <div id="no-explain" class="muted tiny hidden">Explanation is unavailable for this model/vectorizer.</div>
-          </div>
+      <!-- Step diagram (SVG) -->
+      <div class="steps">
+        <div class="step">
+          <div class="step-title" data-tip="Removing noise, normalizing case, stripping markup.">Data Preprocessing</div>
+          <div class="step-sub">Cleaning, tokenization</div>
         </div>
-      </section>
+        <div class="arrow">→</div>
+        <div class="step">
+          <div class="step-title" data-tip="Turning text into numeric vectors.">Feature Extraction</div>
+          <div class="step-sub">TF-IDF n-grams / embeddings</div>
+        </div>
+        <div class="arrow">→</div>
+        <div class="step">
+          <div class="step-title" data-tip="Training with labeled data.">Model Training</div>
+          <div class="step-sub">Scikit-learn / Transformers</div>
+        </div>
+        <div class="arrow">→</div>
+        <div class="step">
+          <div class="step-title" data-tip="Serve the trained pipeline via API.">Prediction</div>
+          <div class="step-sub">Real-time classification</div>
+        </div>
+      </div>
 
-      <!-- Right: Learn -->
-      <aside class="card">
-        <h2>Learn</h2>
-        <details open>
-          <summary>What is this model?</summary>
-          <p>
-            This app uses a trained text classifier (vectorizer + statistical model) to label messages as <b>Spam</b> or <b>Not Spam</b>.
-            It learns patterns (words/phrases/character sequences) that commonly occur in spam.
-          </p>
-        </details>
+      <div class="tips-inline">
+        <span class="chip" data-tip="Natural Language Processing">NLP</span>
+        <span class="chip" data-tip="True positive rate over predicted positives">Precision</span>
+        <span class="chip" data-tip="True positive rate over actual positives">Recall</span>
+        <span class="chip" data-tip="Harmonic mean of precision &amp; recall">F1 Score</span>
+      </div>
+    </section>
 
-        <details>
-          <summary>How does it work?</summary>
-          <ul>
-            <li><b>Vectorizer</b> turns text into numeric features (like TF-IDF n-grams).</li>
-            <li><b>Classifier</b> (e.g., Logistic Regression or Linear SVM) scores those features.</li>
-            <li>A <b>confidence</b> score estimates how strongly the model believes it’s spam.</li>
+    <!-- What is Spam & Phishing -->
+    <section id="spam-phishing" class="section card">
+      <div class="section-head">
+        <h2>What is Spam & Phishing?</h2>
+        <p class="muted">Recognize common tactics and stay safe.</p>
+      </div>
+      <div class="grid-3">
+        <div class="tile">
+          <h3>Spam</h3>
+          <p>Unsolicited bulk messages (ads, promos). Often low-effort and generic.</p>
+        </div>
+        <div class="tile">
+          <h3>Phishing</h3>
+          <p>Deceptive emails that impersonate trusted brands to steal credentials or money.</p>
+        </div>
+        <div class="tile">
+          <h3>Tactics</h3>
+          <ul class="list">
+            <li>Urgency & fear</li>
+            <li>Fake invoices / payroll updates</li>
+            <li>Look-alike domains & links</li>
           </ul>
-        </details>
-
-        <details>
-          <summary>Tips for dealing with spam</summary>
-          <ul class="tips">
-            <li>Be cautious with links and attachments from unknown senders.</li>
-            <li>Ignore “urgent” or “too good to be true” offers demanding quick action.</li>
-            <li>Don’t share personal or financial info via text/email.</li>
-            <li>Use your provider’s “Report spam” features to train filters.</li>
-            <li>Enable multi-factor authentication on important accounts.</li>
+        </div>
+      </div>
+      <div class="do-donts">
+        <div>
+          <h4>How to Spot Suspicious Emails</h4>
+          <ul class="list">
+            <li>Verify the sender domain carefully</li>
+            <li>Hover links before clicking</li>
+            <li>Be skeptical of “immediate action required”</li>
+            <li>Don’t share credentials over email</li>
           </ul>
-        </details>
-      </aside>
-    </main>
+        </div>
+        <div class="callout">
+          Report suspicious messages to your security team and use your mail provider’s “Report spam” button to improve filters.
+        </div>
+      </div>
+    </section>
 
-    <footer>
-      <p>Built with a scikit-learn pipeline. <span class="muted">Educational use only; verify sensitive decisions.</span></p>
-    </footer>
-  </div>
+    <!-- Performance & Evaluation -->
+    <section id="performance" class="section card">
+      <div class="section-head">
+        <h2>Performance & Evaluation</h2>
+        <p class="muted">Key metrics from our evaluation suite.</p>
+      </div>
+      <div id="metric-cards" class="grid-4">
+        <!-- Filled by JS from /metrics -->
+        <div class="metric"><div class="kpi" id="kpi-accuracy">—</div><div class="kpi-label">Accuracy</div></div>
+        <div class="metric"><div class="kpi" id="kpi-precision">—</div><div class="kpi-label">Precision</div></div>
+        <div class="metric"><div class="kpi" id="kpi-recall">—</div><div class="kpi-label">Recall</div></div>
+        <div class="metric"><div class="kpi" id="kpi-f1">—</div><div class="kpi-label">F1 Score</div></div>
+      </div>
+      <div class="grid-2">
+        <div class="panel">
+          <h4>PR-AUC & ROC-AUC</h4>
+          <div class="pair">
+            <div><span class="tag">PR-AUC</span> <span id="val-prauc">—</span></div>
+            <div><span class="tag">ROC-AUC</span> <span id="val-rocauc">—</span></div>
+          </div>
+          <p class="muted tiny">These summarize ranking quality; higher is better. Values appear if recorded during training.</p>
+        </div>
+        <div class="panel">
+          <h4>Confusion Matrix</h4>
+          <div class="cm">
+            <div class="cm-row">
+              <div class="cm-cell head"></div><div class="cm-cell head">Pred: Ham</div><div class="cm-cell head">Pred: Spam</div>
+            </div>
+            <div class="cm-row">
+              <div class="cm-cell head">Actual Ham</div><div class="cm-cell" id="cm-tn">—</div><div class="cm-cell" id="cm-fp">—</div>
+            </div>
+            <div class="cm-row">
+              <div class="cm-cell head">Actual Spam</div><div class="cm-cell" id="cm-fn">—</div><div class="cm-cell" id="cm-tp">—</div>
+            </div>
+          </div>
+          <p class="muted tiny">False positives vs. false negatives matter differently by business context.</p>
+        </div>
+      </div>
+    </section>
 
-  <script>
-    const btn = document.getElementById('predict-btn');
-    const clearBtn = document.getElementById('clear-btn');
-    const textEl = document.getElementById('text');
-    const resultEl = document.getElementById('result');
-    const labelPill = document.getElementById('label-pill');
-    const confValue = document.getElementById('conf-value');
-    const confBarFill = document.getElementById('conf-bar-fill');
-    const calibNote = document.getElementById('calib-note');
-    const explainList = document.getElementById('explain-list');
-    const noExplain = document.getElementById('no-explain');
+    <!-- Business Impact -->
+    <section id="impact" class="section card">
+      <div class="section-head">
+        <h2>Business Impact</h2>
+        <p class="muted">How SecureMail improves organizational trust and productivity.</p>
+      </div>
+      <div class="grid-3">
+        <div class="tile">
+          <h3>Reduced Risk</h3>
+          <p>Fewer phishing attempts reach inboxes, lowering breach probability.</p>
+        </div>
+        <div class="tile">
+          <h3>Time Saved</h3>
+          <p>Automated filtering reduces triage time for IT and employees.</p>
+        </div>
+        <div class="tile">
+          <h3>Trust & Compliance</h3>
+          <p>Clear controls and reporting reinforce security culture and audit readiness.</p>
+        </div>
+      </div>
+    </section>
 
-    btn.addEventListener('click', async () => {
-      const text = textEl.value.trim();
-      if (!text) return;
+    <!-- Learning Hub -->
+    <section id="learning" class="section card">
+      <div class="section-head">
+        <h2>Insights & Cybersecurity Learning Hub</h2>
+        <p class="muted">Stay ahead with practical guidance and trends.</p>
+      </div>
+      <div class="grid-3">
+        <div class="tile">
+          <h3>Trends in Phishing</h3>
+          <p>New lures evolve monthly—train models and staff regularly.</p>
+        </div>
+        <div class="tile">
+          <h3>ML for Email Security</h3>
+          <p>From TF-IDF to transformer embeddings: when to use which.</p>
+        </div>
+        <div class="tile">
+          <h3>Cyber Hygiene</h3>
+          <p>Strong passwords, MFA, and least-privilege access are still king.</p>
+        </div>
+      </div>
+    </section>
 
-      const res = await fetch('/predict', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({text})
-      });
-      const data = await res.json();
+  </main>
 
-      // Label styling
-      labelPill.textContent = data.label;
-      labelPill.className = 'pill ' + (data.prediction === 1 ? 'spam' : 'ham');
-
-      // Confidence
-      const pct = Math.round((data.confidence ?? 0.5) * 100);
-      confValue.textContent = pct + '%';
-      confBarFill.style.width = pct + '%';
-      confBarFill.className = (data.prediction === 1 ? 'bar-spam' : 'bar-ham');
-      calibNote.classList.toggle('hidden', !!data.calibrated);
-
-      // Explanation
-      explainList.innerHTML = '';
-      if (data.explanation && data.explanation.length > 0) {
-        noExplain.classList.add('hidden');
-        data.explanation.forEach(item => {
-          const li = document.createElement('li');
-          li.innerHTML = `<code>${item.token}</code><span class="muted tiny"> contribution ${item.contribution.toFixed(3)}</span>`;
-          explainList.appendChild(li);
-        });
-      } else {
-        noExplain.classList.remove('hidden');
-      }
-
-      resultEl.classList.remove('hidden');
-    });
-
-    clearBtn.addEventListener('click', () => {
-      textEl.value = '';
-      resultEl.classList.add('hidden');
-      explainList.innerHTML = '';
-      noExplain.classList.add('hidden');
-    });
-  </script>
-</body>
-</html>
+  <footer class="site-footer">
+    <div class="wrap">
+      <div cl
