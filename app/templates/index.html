@@ -227,4 +227,82 @@
 
   <footer class="site-footer">
     <div class="wrap">
-      <div cl
+      <div class="foot">© SecureMail • v2.0 — Educational demo. Verify sensitive decisions.</div>
+    </div>
+  </footer>
+
+  <script>
+    // Smooth scroll
+    document.querySelectorAll('[data-scroll]').forEach(a => {
+      a.addEventListener('click', (e) => {
+        e.preventDefault();
+        document.querySelector(a.getAttribute('href')).scrollIntoView({behavior: 'smooth', block: 'start'});
+      });
+    });
+
+    // Tooltips (data-tip attribute)
+    document.querySelectorAll('[data-tip]').forEach(el => {
+      el.addEventListener('mouseenter', () => { el.setAttribute('data-show', '1'); });
+      el.addEventListener('mouseleave', () => { el.removeAttribute('data-show'); });
+    });
+
+    // Classifier call
+    const btn = document.getElementById('predict-btn');
+    const clearBtn = document.getElementById('clear-btn');
+    const textEl = document.getElementById('text');
+    const result = document.getElementById('result');
+    const badge = document.getElementById('badge');
+    const resultCopy = document.getElementById('result-copy');
+
+    btn.addEventListener('click', async () => {
+      const text = textEl.value.trim();
+      if (!text) return;
+      const res = await fetch('/predict', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({text})
+      });
+      const data = await res.json();
+      result.classList.remove('hidden');
+      badge.textContent = data.label;
+      badge.className = 'badge ' + (data.prediction === 1 ? 'spam' : 'ham');
+      resultCopy.textContent = (data.prediction === 1)
+        ? 'This message resembles known spam patterns.'
+        : 'This message does not resemble spam patterns.';
+    });
+
+    clearBtn.addEventListener('click', () => {
+      textEl.value = '';
+      result.classList.add('hidden');
+      badge.className = 'badge';
+      badge.textContent = 'Result';
+      resultCopy.textContent = 'Your result will appear here.';
+    });
+
+    // Load metrics into cards if available
+    fetch('/metrics').then(r => r.json()).then(m => {
+      const set = (id, val) => { const el = document.getElementById(id); if (el && val != null) el.textContent = (typeof val === 'number') ? (val.toFixed(3)) : val; };
+      set('val-prauc', m.pr_auc);
+      set('val-rocauc', m.roc_auc);
+
+      // Optional fields if you add them to metadata.json during training
+      set('kpi-accuracy', m.accuracy ?? '—');
+      set('kpi-precision', m.precision ?? '—');
+      set('kpi-recall', m.recall ?? '—');
+      set('kpi-f1', m.f1 ?? '—');
+
+      // Optional confusion matrix
+      if (m.confusion_matrix && Array.isArray(m.confusion_matrix)) {
+        // Expect [[tn, fp],[fn, tp]] or similar — try to place safely
+        const flat = m.confusion_matrix.flat();
+        if (flat.length >= 4) {
+          document.getElementById('cm-tn').textContent = flat[0];
+          document.getElementById('cm-fp').textContent = flat[1];
+          document.getElementById('cm-fn').textContent = flat[2];
+          document.getElementById('cm-tp').textContent = flat[3];
+        }
+      }
+    }).catch(() => {});
+  </script>
+</body>
+</html>
