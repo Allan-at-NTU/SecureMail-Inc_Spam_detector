@@ -8,37 +8,143 @@
 </head>
 <body>
   <div class="container">
-    <header>
-      <h1>Spam Detector</h1>
-      <p class="subtitle">Paste a message below to check if it’s spam.</p>
+    <header class="header">
+      <div class="brand">
+        <div class="logo">📡</div>
+        <div>
+          <h1>Spam Detector</h1>
+          <p class="subtitle">Paste a message to see if it’s spam, with confidence and quick explanation.</p>
+        </div>
+      </div>
+      <div class="badge">v1.1</div>
     </header>
 
-    <main>
-      <form id="spam-form" onsubmit="return false;">
-        <textarea id="text" placeholder="Type or paste your message..."></textarea>
-        <button id="predict-btn">Check</button>
-      </form>
-      <div id="result" class="result"></div>
+    <main class="grid">
+      <!-- Left: Classifier -->
+      <section class="card">
+        <h2>Classifier</h2>
+        <form id="spam-form" onsubmit="return false;">
+          <label class="label">Message</label>
+          <textarea id="text" placeholder="Type or paste your message..."></textarea>
+
+          <div class="actions">
+            <button id="predict-btn">Analyze</button>
+            <button id="clear-btn" type="button" class="ghost">Clear</button>
+          </div>
+        </form>
+
+        <div id="result" class="result hidden">
+          <div class="pill" id="label-pill">Result</div>
+          <div class="conf">
+            <div class="conf-row">
+              <span>Confidence</span>
+              <span id="conf-value">—</span>
+            </div>
+            <div class="conf-bar"><div id="conf-bar-fill"></div></div>
+            <div id="calib-note" class="muted tiny hidden">Note: confidence is approximate (not calibrated).</div>
+          </div>
+
+          <div class="explain">
+            <h3>Why this result?</h3>
+            <ul id="explain-list" class="tokens"></ul>
+            <div id="no-explain" class="muted tiny hidden">Explanation is unavailable for this model/vectorizer.</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Right: Learn -->
+      <aside class="card">
+        <h2>Learn</h2>
+        <details open>
+          <summary>What is this model?</summary>
+          <p>
+            This app uses a trained text classifier (vectorizer + statistical model) to label messages as <b>Spam</b> or <b>Not Spam</b>.
+            It learns patterns (words/phrases/character sequences) that commonly occur in spam.
+          </p>
+        </details>
+
+        <details>
+          <summary>How does it work?</summary>
+          <ul>
+            <li><b>Vectorizer</b> turns text into numeric features (like TF-IDF n-grams).</li>
+            <li><b>Classifier</b> (e.g., Logistic Regression or Linear SVM) scores those features.</li>
+            <li>A <b>confidence</b> score estimates how strongly the model believes it’s spam.</li>
+          </ul>
+        </details>
+
+        <details>
+          <summary>Tips for dealing with spam</summary>
+          <ul class="tips">
+            <li>Be cautious with links and attachments from unknown senders.</li>
+            <li>Ignore “urgent” or “too good to be true” offers demanding quick action.</li>
+            <li>Don’t share personal or financial info via text/email.</li>
+            <li>Use your provider’s “Report spam” features to train filters.</li>
+            <li>Enable multi-factor authentication on important accounts.</li>
+          </ul>
+        </details>
+      </aside>
     </main>
 
     <footer>
-      <p>Powered by a scikit-learn pipeline. <span class="muted">v1.0.0</span></p>
+      <p>Built with a scikit-learn pipeline. <span class="muted">Educational use only; verify sensitive decisions.</span></p>
     </footer>
   </div>
 
   <script>
     const btn = document.getElementById('predict-btn');
+    const clearBtn = document.getElementById('clear-btn');
+    const textEl = document.getElementById('text');
+    const resultEl = document.getElementById('result');
+    const labelPill = document.getElementById('label-pill');
+    const confValue = document.getElementById('conf-value');
+    const confBarFill = document.getElementById('conf-bar-fill');
+    const calibNote = document.getElementById('calib-note');
+    const explainList = document.getElementById('explain-list');
+    const noExplain = document.getElementById('no-explain');
+
     btn.addEventListener('click', async () => {
-      const text = document.getElementById('text').value;
+      const text = textEl.value.trim();
+      if (!text) return;
+
       const res = await fetch('/predict', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({text})
       });
       const data = await res.json();
-      const resultEl = document.getElementById('result');
-      resultEl.textContent = data.label;
-      resultEl.className = 'result ' + (data.prediction === 1 ? 'spam' : 'ham');
+
+      // Label styling
+      labelPill.textContent = data.label;
+      labelPill.className = 'pill ' + (data.prediction === 1 ? 'spam' : 'ham');
+
+      // Confidence
+      const pct = Math.round((data.confidence ?? 0.5) * 100);
+      confValue.textContent = pct + '%';
+      confBarFill.style.width = pct + '%';
+      confBarFill.className = (data.prediction === 1 ? 'bar-spam' : 'bar-ham');
+      calibNote.classList.toggle('hidden', !!data.calibrated);
+
+      // Explanation
+      explainList.innerHTML = '';
+      if (data.explanation && data.explanation.length > 0) {
+        noExplain.classList.add('hidden');
+        data.explanation.forEach(item => {
+          const li = document.createElement('li');
+          li.innerHTML = `<code>${item.token}</code><span class="muted tiny"> contribution ${item.contribution.toFixed(3)}</span>`;
+          explainList.appendChild(li);
+        });
+      } else {
+        noExplain.classList.remove('hidden');
+      }
+
+      resultEl.classList.remove('hidden');
+    });
+
+    clearBtn.addEventListener('click', () => {
+      textEl.value = '';
+      resultEl.classList.add('hidden');
+      explainList.innerHTML = '';
+      noExplain.classList.add('hidden');
     });
   </script>
 </body>
