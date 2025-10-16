@@ -14,7 +14,6 @@
         <a href="#classifier" data-scroll>Test</a>
         <a href="#how-it-works" data-scroll>How it Works</a>
         <a href="#spam-phishing" data-scroll>Spam & Phishing</a>
-        <a href="#performance" data-scroll>Performance</a>
         <a href="#impact" data-scroll>Business Impact</a>
         <a href="#learning" data-scroll>Learning Hub</a>
       </nav>
@@ -56,7 +55,6 @@
             <div id="badge" class="badge">Result</div>
             <div class="result-copy" id="result-copy">Your result will appear here.</div>
           </div>
-          <div class="note muted tiny">No probabilities or feature attributions are shown; this demo focuses on clarity and privacy.</div>
         </div>
       </div>
     </section>
@@ -68,7 +66,6 @@
         <p class="muted">A simple end-to-end pipeline with modern NLP.</p>
       </div>
 
-      <!-- Step diagram (SVG) -->
       <div class="steps">
         <div class="step">
           <div class="step-title" data-tip="Removing noise, normalizing case, stripping markup.">Data Preprocessing</div>
@@ -139,46 +136,6 @@
       </div>
     </section>
 
-    <!-- Performance & Evaluation -->
-    <section id="performance" class="section card">
-      <div class="section-head">
-        <h2>Performance & Evaluation</h2>
-        <p class="muted">Key metrics from our evaluation suite.</p>
-      </div>
-      <div id="metric-cards" class="grid-4">
-        <!-- Filled by JS from /metrics -->
-        <div class="metric"><div class="kpi" id="kpi-accuracy">—</div><div class="kpi-label">Accuracy</div></div>
-        <div class="metric"><div class="kpi" id="kpi-precision">—</div><div class="kpi-label">Precision</div></div>
-        <div class="metric"><div class="kpi" id="kpi-recall">—</div><div class="kpi-label">Recall</div></div>
-        <div class="metric"><div class="kpi" id="kpi-f1">—</div><div class="kpi-label">F1 Score</div></div>
-      </div>
-      <div class="grid-2">
-        <div class="panel">
-          <h4>PR-AUC & ROC-AUC</h4>
-          <div class="pair">
-            <div><span class="tag">PR-AUC</span> <span id="val-prauc">—</span></div>
-            <div><span class="tag">ROC-AUC</span> <span id="val-rocauc">—</span></div>
-          </div>
-          <p class="muted tiny">These summarize ranking quality; higher is better. Values appear if recorded during training.</p>
-        </div>
-        <div class="panel">
-          <h4>Confusion Matrix</h4>
-          <div class="cm">
-            <div class="cm-row">
-              <div class="cm-cell head"></div><div class="cm-cell head">Pred: Ham</div><div class="cm-cell head">Pred: Spam</div>
-            </div>
-            <div class="cm-row">
-              <div class="cm-cell head">Actual Ham</div><div class="cm-cell" id="cm-tn">—</div><div class="cm-cell" id="cm-fp">—</div>
-            </div>
-            <div class="cm-row">
-              <div class="cm-cell head">Actual Spam</div><div class="cm-cell" id="cm-fn">—</div><div class="cm-cell" id="cm-tp">—</div>
-            </div>
-          </div>
-          <p class="muted tiny">False positives vs. false negatives matter differently by business context.</p>
-        </div>
-      </div>
-    </section>
-
     <!-- Business Impact -->
     <section id="impact" class="section card">
       <div class="section-head">
@@ -240,7 +197,7 @@
       });
     });
 
-    // Tooltips (data-tip attribute)
+    // Tooltips
     document.querySelectorAll('[data-tip]').forEach(el => {
       el.addEventListener('mouseenter', () => { el.setAttribute('data-show', '1'); });
       el.addEventListener('mouseleave', () => { el.removeAttribute('data-show'); });
@@ -278,31 +235,6 @@
       badge.textContent = 'Result';
       resultCopy.textContent = 'Your result will appear here.';
     });
-
-    // Load metrics into cards if available
-    fetch('/metrics').then(r => r.json()).then(m => {
-      const set = (id, val) => { const el = document.getElementById(id); if (el && val != null) el.textContent = (typeof val === 'number') ? (val.toFixed(3)) : val; };
-      set('val-prauc', m.pr_auc);
-      set('val-rocauc', m.roc_auc);
-
-      // Optional fields if you add them to metadata.json during training
-      set('kpi-accuracy', m.accuracy ?? '—');
-      set('kpi-precision', m.precision ?? '—');
-      set('kpi-recall', m.recall ?? '—');
-      set('kpi-f1', m.f1 ?? '—');
-
-      // Optional confusion matrix
-      if (m.confusion_matrix && Array.isArray(m.confusion_matrix)) {
-        // Expect [[tn, fp],[fn, tp]] or similar — try to place safely
-        const flat = m.confusion_matrix.flat();
-        if (flat.length >= 4) {
-          document.getElementById('cm-tn').textContent = flat[0];
-          document.getElementById('cm-fp').textContent = flat[1];
-          document.getElementById('cm-fn').textContent = flat[2];
-          document.getElementById('cm-tp').textContent = flat[3];
-        }
-      }
-    }).catch(() => {});
   </script>
 </body>
 </html>
