@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ title }}</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Spam Detector</h1>
+      <p class="subtitle">Paste a message below to check if it’s spam.</p>
+    </header>
+
+    <main>
+      <form id="spam-form" onsubmit="return false;">
+        <textarea id="text" placeholder="Type or paste your message..."></textarea>
+        <button id="predict-btn">Check</button>
+      </form>
+      <div id="result" class="result"></div>
+    </main>
+
+    <footer>
+      <p>Powered by a scikit-learn pipeline. <span class="muted">v1.0.0</span></p>
+    </footer>
+  </div>
+
+  <script>
+    const btn = document.getElementById('predict-btn');
+    btn.addEventListener('click', async () => {
+      const text = document.getElementById('text').value;
+      const res = await fetch('/predict', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({text})
+      });
+      const data = await res.json();
+      const resultEl = document.getElementById('result');
+      resultEl.textContent = data.label;
+      resultEl.className = 'result ' + (data.prediction === 1 ? 'spam' : 'ham');
+    });
+  </script>
+</body>
+</html>
