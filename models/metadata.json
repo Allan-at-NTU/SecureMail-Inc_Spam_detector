@@ -1,15 +1,8 @@
 {
-  "selected_model": "tfidf+svc(calibrated)",
-  "best_params": {
-    "tfidf__ngram_range": [
-      1,
-      3
-    ],
-    "tfidf__min_df": 3,
-    "tfidf__max_df": 0.9,
-    "tfidf__analyzer": "char"
-  },
-  "pr_auc": 0.9905627750375499,
-  "roc_auc": 0.9973599010657662,
-  "random_state": 42
+    "encoder": "TF-IDF",
+    "model": "Linear SVM",
+    "accuracy": 0.9820627802690582,
+    "precision": 0.9849624060150376,
+    "recall": 0.8791946308724832,
+    "f1_score": 0.9290780141843972
 }
